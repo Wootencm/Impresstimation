@@ -81,6 +81,7 @@ echo '
       ';
 
   $box_query = mysql_query("SELECT service_type FROM services where category='".$row[0]."' and offered='Yes' and pp='Pre'");
+  echo '<option></option>';
   while ($row2 = mysql_fetch_array($box_query)) {
 echo '<option>'.$row2[0].'</option>';
   }
@@ -105,6 +106,7 @@ echo '
       ';
 
   $box_query = mysql_query("SELECT service_type FROM services where category='".$row[0]."' and offered='Yes' and pp='Post'");
+  echo '<option></option>';
   while ($row2 = mysql_fetch_array($box_query)) {
   echo '<option>'.$row2[0].'</option>';
   }
