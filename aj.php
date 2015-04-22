@@ -1,0 +1,77 @@
+<?php
+session_start();
+include "database.php";
+
+$con=mysql_connect($DB_HOST,$DB_USER,$DB_PASSWORD) or die("Failed to connect to MySQL: " . mysql_error()); $db=mysql_select_db($DB_NAME,$con) or die("Failed to connect to MySQL: " . mysql_error());
+$query = mysql_query("SELECT * FROM userTable where email = '$_SESSION[user]' AND password = '$_SESSION[password]'") or die(mysql_error());
+$row = mysql_fetch_array($query);
+
+if ($row['email']) {
+echo '
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+</head>
+<body>
+<div class="container-fluid">
+<div class="content-main">
+<ul class="nav nav-tabs" role="tablist">
+  <li><a href="admin.php">Home</a></li>
+  <li class="active"><a href="aj.php">Active Jobs</a></li>
+  <li><a href="ij.php">Inactive Jobs</a></li>
+  <li><a href="client.php">Clients</a></li>
+  <li><a href="salesreps.php">Sales Reps</a></li>
+  <li><a href="settings.php">Settings</a></li>
+</ul>
+<div class="row">
+<center>
+<div class="well">
+<h3>Active Jobs</h3>
+</center>
+</div>
+<div class="center-block">
+<table class="table table-condensed table-striped table-hover">
+<tr>
+<td><p class="text-center">Job #</p></td>
+<td><p class="text-center">Client</p></td>
+<td><p class="text-center">Sales Rep</p></td>
+<td><p class="text-center">Location</p></td>
+<td><p class="text-center">View PDF</p></td>
+</tr>';
+
+$table_query = mysql_query("SELECT * FROM jobs where status='active'");
+while ($row = mysql_fetch_array($table_query)) {
+  $id_query = mysql_query("SELECT * FROM userTable where first_name='".$row[first_name_client]."' and last_name='".$row[last_name_client]."'");
+  $rowid = mysql_fetch_array($id_query);
+    $j_query = mysql_query("SELECT * FROM jobs where id = '$row[id]'" );
+  $tgrow = mysql_fetch_array($j_query);
+  echo '<tr>';
+  echo '<td><p class="text-center"><small><a href="j.php?id='.$row[id].'">'.$row[id].'</a></small></p></td>';
+  echo '<td><p class="text-center"><small><a href="c.php?id='.$rowid[id].'">'.$row[first_name_client].' '.$row[last_name_client].'</a></small></p></td>';
+  echo '<td><p class="text-center"><small><a href="s.php?f='.$row[first_name_sales_rep].'&l='.$row[last_name_sales_rep].'">'.$row[first_name_sales_rep].' '.$row[last_name_sales_rep].'</a></small></p></td>';
+  echo '<td><p class="text-center"><small>'.$row[location].'</small></p></td>';
+  echo '<td><p class="text-center"><small>';
+
+  if ($tgrow[pdf] == 'Yes') {
+    echo '<a href="../forms/orders/'.$row[id].'.pdf'.'">PDF</a>';
+  }
+  echo '</small></p></td>';
+  //echo $row[client];
+  echo '</tr>';
+}
+
+echo '
+</table>
+</div>
+<ul class="nav navbar-fixed-bottom">
+<center>
+        <li><a href="logout.php">Logout</a></li></center>
+        </ul>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>';
+}
+?>
